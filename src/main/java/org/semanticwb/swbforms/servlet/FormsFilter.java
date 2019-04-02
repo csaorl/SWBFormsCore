@@ -69,8 +69,8 @@ public class FormsFilter implements Filter {
         logger.info("Loading Static Files...");
         admFiles = new HashMap();
         try {
-            logger.info("Loading Static Files from: /WEB-INF/SWBFormsStatic.jar");
-            String zipPath = DataMgr.getApplicationPath() + "/WEB-INF/SWBFormsStatic.jar";
+            logger.info("Loading Static Files from: /WEB-INF/SWBFormsStatic-1.0-SNAPSHOT.jar");
+            String zipPath = DataMgr.getApplicationPath() + "/WEB-INF/SWBFormsStatic-1.0-SNAPSHOT.jar";
             ZipFile zf = new ZipFile(zipPath);
             Enumeration e = zf.entries();
             while (e.hasMoreElements()) {
