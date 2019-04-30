@@ -28,6 +28,8 @@ import org.semanticwb.datamanager.DataObject;
 import org.semanticwb.datamanager.DataUtils;
 import org.semanticwb.datamanager.RouteData;
 import org.semanticwb.datamanager.RoutesMgr;
+import org.semanticwb.datamanager.SWBDataSource;
+import org.semanticwb.datamanager.monitor.SWBMonitorMgr;
 import org.semanticwb.datamanager.script.ScriptObject;
 import org.semanticwb.swbforms.servlet.router.RouteHandler;
 
@@ -86,7 +88,8 @@ public class FormsFilter implements Filter {
     }    
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException 
+    {
         Object obj = ((HttpServletRequest) request).getSession().getAttribute("_USER_");
 //        System.out.println("obj:"+obj);
         DataObject user = null;
@@ -133,11 +136,18 @@ public class FormsFilter implements Filter {
         
         if(processStaticFile(path, (HttpServletRequest)request, (HttpServletResponse)response))return;
         
-        if (null == handler) {
-            chain.doFilter(request, response);
-        } else {
-            handler.handle(hreq, (HttpServletResponse) response);
-        }
+        SWBMonitorMgr.startMonitor("/wp"+path);
+        try
+        {        
+            if (null == handler) {
+                chain.doFilter(request, response);
+            } else {
+                handler.handle(hreq, (HttpServletResponse) response);
+            }
+        }finally
+        {
+            SWBMonitorMgr.endMonitor();
+        }        
     }
 
     @Override
