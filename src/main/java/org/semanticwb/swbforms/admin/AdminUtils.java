@@ -234,21 +234,44 @@ public class AdminUtils {
                         }
                         
                         {
+                            ds=eng.getDataSource("GlobalScript");                        
+                            DataObject query=new DataObject();
+                            query.addSubList("sortBy").add("order");
+                            it=ds.find(query);
+                            while (it.hasNext()) {
+                                DataObject obj = it.next();
+                                if(!obj.getBoolean("active", false))continue;
+
+                                String id=obj.getString("id");
+                                String script=obj.getString("script");
+                                int order=obj.getInt("order");
+
+                                ret=new StringBuilder();
+                                ret.append("\n");
+                                ret.append(script);
+                                ret.append("\n\n");
+                                ds_cache.addSubObject("GlobalScript_"+obj.getString("id")).addParam("text", ret.toString()).addParam("backend", true).addParam("frontend", false);     
+                            }                                                        
+                            
+                            
                             ds=eng.getDataSource("DataProcessor");                        
                             it=ds.find();
                             while (it.hasNext()) {
                                 DataObject obj = it.next();
+                                if(!obj.getBoolean("active", false))continue;
 
                                 String id=obj.getString("id");
                                 DataList dataSources=obj.getDataList("dataSources", new DataList());
                                 DataList actions=obj.getDataList("actions", new DataList());
                                 String request=obj.getString("request");
                                 String response=obj.getString("response");
+                                int order=obj.getInt("order");
 
                                 ret=new StringBuilder();
                                 ret.append("eng.dataProcessors[\""+id+"\"] = {"+"\n");
                                 ret.append("    dataSources: "+dataSources+","+"\n");
                                 ret.append("    actions: "+actions+","+"\n");
+                                ret.append("    order: "+order+","+"\n");
                                 if(request!=null  && request.trim().length()>0)ret.append("    request: "+request.replace("\n", "\n    ")+","+"\n");
                                 if(response!=null  && response.trim().length()>0)ret.append("    response: "+response.replace("\n", "\n    ")+","+"\n");
                                 ret.append("};"+"\n");
@@ -259,20 +282,55 @@ public class AdminUtils {
                             it=ds.find();
                             while (it.hasNext()) {
                                 DataObject obj = it.next();
+                                if(!obj.getBoolean("active", false))continue;
 
                                 String id=obj.getString("id");
                                 DataList dataSources=obj.getDataList("dataSources", new DataList());
                                 DataList actions=obj.getDataList("actions", new DataList());
                                 String service=obj.getString("service");
+                                int order=obj.getInt("order");
 
                                 ret=new StringBuilder();
                                 ret.append("eng.dataServices[\""+id+"\"] = {"+"\n");
                                 ret.append("    dataSources: "+dataSources+","+"\n");
                                 ret.append("    actions: "+actions+","+"\n");
+                                ret.append("    order: "+order+","+"\n");
                                 if(service!=null  && service.trim().length()>0)ret.append("    service: "+service.replace("\n", "\n    ")+","+"\n");
                                 ret.append("};"+"\n");
                                 ds_cache.addSubObject("DataService_"+obj.getString("id")).addParam("text", ret.toString()).addParam("backend", true).addParam("frontend", false);   
-                            }         
+                            }     
+                            
+                            ds=eng.getDataSource("DataExtractor");                        
+                            it=ds.find();
+                            while (it.hasNext()) {
+                                DataObject obj = it.next();
+                                if(!obj.getBoolean("active", false))continue;
+
+                                String id=obj.getString("id");
+                                String scriptEngine=obj.getString("scriptEngine","/admin/ds/datasources.js");
+                                String dataSource=obj.getString("dataSource");
+                                String start=obj.getString("start");
+                                String extract=obj.getString("extract");
+                                String stop=obj.getString("stop");
+                                int time=obj.getInt("time");
+                                String unit=obj.getString("unit");
+
+                                ret=new StringBuilder();
+                                ret.append("eng.dataExtractors[\""+id+"\"] = {"+"\n");
+                                ret.append("    scriptEngine:\""+scriptEngine+"\","+"\n");
+                                ret.append("    dataSource: \""+dataSource+"\","+"\n");
+                                ret.append("    extractor:{\n");
+                                if(start!=null  && start.trim().length()>0)ret.append("        start: "+start.replace("\n", "\n        ")+","+"\n");
+                                if(extract!=null  && extract.trim().length()>0)ret.append("        extract: "+extract.replace("\n", "\n        ")+","+"\n");
+                                if(stop!=null  && stop.trim().length()>0)ret.append("        stop: "+stop.replace("\n", "\n        ")+","+"\n");
+                                ret.append("    },\n");
+                                ret.append("    timer:{\n");
+                                ret.append("        time: "+time+","+"\n");
+                                ret.append("        unit: \""+unit+"\""+"\n");                                
+                                ret.append("    }\n");
+                                ret.append("};"+"\n");
+                                ds_cache.addSubObject("DataExtractor_"+obj.getString("id")).addParam("text", ret.toString()).addParam("backend", true).addParam("frontend", false);     
+                            }                            
                         }                        
                         ds_engineId=eng.getId();
                     }catch(Exception e){
