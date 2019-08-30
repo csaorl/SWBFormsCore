@@ -312,6 +312,8 @@ public class AdminUtils {
                                 String start=obj.getString("start");
                                 String extract=obj.getString("extract");
                                 String stop=obj.getString("stop");
+                                int first_time=obj.getInt("first_time");
+                                String first_unit=obj.getString("first_unit");
                                 int time=obj.getInt("time");
                                 String unit=obj.getString("unit");
 
@@ -325,6 +327,8 @@ public class AdminUtils {
                                 if(stop!=null  && stop.trim().length()>0)ret.append("        stop: "+stop.replace("\n", "\n        ")+","+"\n");
                                 ret.append("    },\n");
                                 ret.append("    timer:{\n");
+                                ret.append("        first_time: "+first_time+","+"\n");
+                                ret.append("        first_unit: \""+first_unit+"\","+"\n");                                
                                 ret.append("        time: "+time+","+"\n");
                                 ret.append("        unit: \""+unit+"\""+"\n");                                
                                 ret.append("    }\n");
