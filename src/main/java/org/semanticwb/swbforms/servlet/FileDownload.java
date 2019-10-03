@@ -40,10 +40,11 @@ public class FileDownload extends HttpServlet {
     {
         String uri=request.getRequestURI();
         String parts[]=uri.split("/");
-        if(parts.length>=4)
+        
+        if(parts.length>=5)
         {
-            String fid=parts[2];
-            String fname=parts[3];
+            String fid=parts[3];
+            String fname=parts[4];
             String mimetype=URLConnection.guessContentTypeFromName(fname);
             if(mimetype==null)mimetype="application/octet-stream";
             
